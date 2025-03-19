@@ -79,22 +79,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 30),
                   Text(
-                    'Email',
+                    'Phone Number',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      hintText: "Enter your email",
+                      hintText: "Enter your phone number",
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Email is required';
-                      } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
-                        return 'Enter a valid email';
+                        return 'Phone number is required';
+                      } else if (!RegExp(r'^\d{8,15}$').hasMatch(value)) {
+                        return 'Enter a valid phone number';
                       }
                       return null;
                     },
@@ -150,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               await controller.login(
-                                email: _emailController,
+                                phone: _emailController,
                                 password: _passwordController,
                                 context: context,
                               );

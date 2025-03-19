@@ -15,7 +15,6 @@ class CreateAccountUsecase {
           required String email,
           required String governorate,
           required String phone,
-          required String role,
           required DateTime birthDate,
           required String password}) async =>
       await _authenticationRepository.createAccount(
@@ -25,7 +24,6 @@ class CreateAccountUsecase {
           email: email,
           governorate: governorate,
           phone: phone,
-          role: role,
           birthDate: birthDate,
           password: password);
 }

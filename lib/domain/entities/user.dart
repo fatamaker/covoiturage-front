@@ -6,7 +6,7 @@ class User {
   final String email;
   final String? phone;
   final String password;
-  final String? role;
+
   final String? governorate;
   final DateTime? birthDate;
 
@@ -18,7 +18,6 @@ class User {
     required this.email,
     this.phone,
     required this.password,
-    required this.role,
     this.governorate,
     this.birthDate,
   });

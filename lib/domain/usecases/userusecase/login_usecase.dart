@@ -9,6 +9,6 @@ class LoginUsecase {
   const LoginUsecase(this._authenticationRepository);
 
   Future<Either<Failure, Token>> call(
-          {required String email, required String password}) async =>
-      await _authenticationRepository.login(email: email, password: password);
+          {required String phone, required String password}) async =>
+      await _authenticationRepository.login(phone: phone, password: password);
 }

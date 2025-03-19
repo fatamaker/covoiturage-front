@@ -9,7 +9,6 @@ class UserModel extends User {
     required super.email,
     super.phone,
     required super.password,
-    required super.role,
     required super.governorate,
     super.birthDate,
   });
@@ -24,7 +23,7 @@ class UserModel extends User {
       governorate: json['governorate'] ?? '',
       phone: json['phone'] ?? '',
       password: json['password'] ?? '',
-      role: json['role'] ?? '',
+
       birthDate: json['birthDate'] != null
           ? DateTime.parse(json['birthDate'])
           : DateTime.parse(
@@ -41,7 +40,6 @@ class UserModel extends User {
       'governorate': governorate,
       'phone': phone,
       'password': password,
-      'role': role!.isEmpty ? '' : role,
       'birthDate': birthDate?.toIso8601String(),
     };
   }

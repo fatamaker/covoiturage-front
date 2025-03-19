@@ -21,7 +21,6 @@ abstract class AuthenticationRemoteDataSource {
     String email,
     String governorate,
     String phone,
-    String role,
     DateTime birthDate,
     String password,
   );
@@ -66,7 +65,6 @@ class AuthenticationRemoteDataSourceImpl
       String email,
       String governorate,
       String phone,
-      String role,
       DateTime birthDate,
       String password) async {
     try {
@@ -78,7 +76,6 @@ class AuthenticationRemoteDataSourceImpl
           email: email,
           governorate: governorate,
           phone: phone,
-          role: role,
           birthDate: birthDate,
           password: password);
       Map<String, dynamic> requestData = userModel.toJson();
@@ -92,7 +89,7 @@ class AuthenticationRemoteDataSourceImpl
         final responseData = jsonDecode(response.body);
         return responseData["uId"];
       } else if (response.statusCode == 403) {
-        throw RegistrationException("email_already_used");
+        throw RegistrationException("User already exists");
       } else {
         throw ServerException(
             message: "Unexpected error occurred: ${response.body}");
@@ -105,16 +102,17 @@ class AuthenticationRemoteDataSourceImpl
   }
 
   @override
-  Future<TokenModel> login(String email, String password) async {
+  Future<TokenModel> login(String phone, String password) async {
     String msg = "";
     try {
-      Map<String, dynamic> user = {'email': email, 'password': password};
+      Map<String, dynamic> user = {'phone': phone, 'password': password};
       final url = Uri.parse(APIConst.login);
       final res = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user),
       );
+      print(res.body);
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         final TokenModel token = TokenModel.fromJson(data);
@@ -126,7 +124,7 @@ class AuthenticationRemoteDataSourceImpl
             msg = "wrong password";
             break;
           case 404:
-            msg = "email not registred";
+            msg = "Phone number not registred";
 
             break;
           default:

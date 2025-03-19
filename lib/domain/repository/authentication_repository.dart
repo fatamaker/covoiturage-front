@@ -13,12 +13,11 @@ abstract class AuthenticationRepository {
       required String email,
       required String governorate,
       required String phone,
-      required String role,
       required DateTime birthDate,
       required String password});
 
   Future<Either<Failure, Token>> login(
-      {required String email, required String password});
+      {required String phone, required String password});
 
   Future<Either<Failure, Token?>> autologin();
   Future<Either<Failure, Unit>> logout();

@@ -27,20 +27,11 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       required String email,
       required String governorate,
       required String phone,
-      required String role,
       required DateTime birthDate,
       required String password}) async {
     try {
-      final res = await authenticationRemoteDataSource.createAccount(
-          firstName,
-          lastName,
-          imageUrl,
-          email,
-          governorate,
-          phone,
-          role,
-          birthDate,
-          password);
+      final res = await authenticationRemoteDataSource.createAccount(firstName,
+          lastName, imageUrl, email, governorate, phone, birthDate, password);
       return Right(res);
     } on RegistrationException catch (e) {
       return Left(RegistrationFailure(e.message));
@@ -49,10 +40,10 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   @override
   Future<Either<Failure, Token>> login(
-      {required String email, required String password}) async {
+      {required String phone, required String password}) async {
     try {
       TokenModel tm =
-          await authenticationRemoteDataSource.login(email, password);
+          await authenticationRemoteDataSource.login(phone, password);
       await authenticationLocalDataSource.saveUserInformations(tm);
       Token t =
           Token(token: tm.token, expiryDate: tm.expiryDate, userId: tm.userId);

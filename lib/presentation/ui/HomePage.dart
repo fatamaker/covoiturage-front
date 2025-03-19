@@ -1,18 +1,39 @@
+import 'package:covoiturage2/presentation/ui/AddRideScreen1.dart';
+import 'package:covoiturage2/presentation/ui/HomeScreen.dart';
+import 'package:covoiturage2/presentation/ui/widgets/BottomNavBar.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  static List<Widget> _widgetOptions = <Widget>[
+    HomeScreen(),
+    AddRideScreen1(),
+    Text('Search'),
+    Text('Profile'),
+    Text('Inbox'),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Accueil'), // Titre de l'écran principal
-        backgroundColor: Colors.green, // Couleur de l'appBar
-      ),
       body: Center(
-        child: Text(
-          'Bienvenue sur l\'écran principal !',
-          style: TextStyle(fontSize: 20),
-        ),
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }

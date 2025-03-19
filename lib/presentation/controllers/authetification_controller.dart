@@ -46,8 +46,7 @@ class AuthenticationController extends GetxController {
   bool get missingData =>
       currentUser.phone == null ||
       currentUser.governorate == null ||
-      currentUser.birthDate == null ||
-      currentUser.role == null;
+      currentUser.birthDate == null;
 
   void setBirthDate(DateTime date) {
     final year = date.year;
@@ -109,13 +108,12 @@ class AuthenticationController extends GetxController {
     required TextEditingController lastName,
     required TextEditingController password,
     required TextEditingController phone,
-    required String role,
     required TextEditingController birthDate,
     required BuildContext context,
   }) async {
     String userid = "";
-    String message = '';
 
+    // Validate birth date
     DateTime? parsedBirthDate;
     try {
       parsedBirthDate = DateTime.parse(birthDate.text);
@@ -128,9 +126,10 @@ class AuthenticationController extends GetxController {
         textColor: Colors.white,
         fontSize: 16.0,
       );
-      return userid; // Return early if birth date is invalid
+      return userid;
     }
 
+    // Call the backend API directly
     final res = await CreateAccountUsecase(sl()).call(
       email: email.text,
       password: password.text,
@@ -140,13 +139,18 @@ class AuthenticationController extends GetxController {
       lastName: lastName.text,
       imageUrl: '',
       birthDate: parsedBirthDate,
-      role: role,
     );
 
     res.fold((l) {
-      message = l.message!;
+      String errorMessage = l.message ?? "An error occurred";
+
+      if (errorMessage.contains("User already exists")) {
+        errorMessage =
+            "Phone number already in use. Please use a different number.";
+      }
+
       Fluttertoast.showToast(
-        msg: message,
+        msg: errorMessage,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -156,22 +160,16 @@ class AuthenticationController extends GetxController {
     }, (r) async {
       print("Response from create account: $r");
 
-      // Clear input fields
       email.clear();
       password.clear();
       firstName.clear();
       lastName.clear();
       phone.clear();
       governorate.clear();
-
       birthDate.clear();
-
-      // Reset other values if needed
-      termsAccepted = false;
 
       update();
 
-      // Show success toast
       Fluttertoast.showToast(
         msg: "Registration successful! Redirecting to login...",
         toastLength: Toast.LENGTH_SHORT,
@@ -181,23 +179,21 @@ class AuthenticationController extends GetxController {
         fontSize: 16.0,
       );
 
-      // Navigate to login screen
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (_) => LoginScreen()));
     });
 
-    update();
     return userid;
   }
 
   Future<void> login(
-      {required TextEditingController email,
+      {required TextEditingController phone,
       required TextEditingController password,
       required BuildContext context}) async {
     isLoading = true;
     update();
     final res =
-        await LoginUsecase(sl())(email: email.text, password: password.text);
+        await LoginUsecase(sl())(phone: phone.text, password: password.text);
 
     res.fold(
         (l) => Fluttertoast.showToast(
@@ -209,7 +205,7 @@ class AuthenticationController extends GetxController {
             textColor: Colors.white,
             fontSize: 16.0), (r) async {
       token = r;
-      email.clear();
+      phone.clear();
       password.clear();
       // ignore: unused_local_variable
       final userRes = await getCurrentUser(r.userId);
@@ -360,7 +356,7 @@ class AuthenticationController extends GetxController {
             textColor: Colors.white,
             fontSize: 16.0), (r) {
       currentUser = r;
-      role = currentUser.role;
+
       birthDate = currentUser.birthDate.toString();
     });
     update();
