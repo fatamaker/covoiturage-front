@@ -1,7 +1,16 @@
 import 'package:covoiturage2/data/data-source/local_data_source/authentication_local_data_source.dart';
 import 'package:covoiturage2/data/data-source/remote_data_source/remote_authentication_data_source.dart';
+import 'package:covoiturage2/data/data-source/remote_data_source/ride_remote_data_source.dart';
+import 'package:covoiturage2/data/repository/ride_repository_impl.dart';
 import 'package:covoiturage2/data/repository/user_repository_impl.dart';
+import 'package:covoiturage2/domain/repository/RideRepository.dart';
 import 'package:covoiturage2/domain/repository/authentication_repository.dart';
+import 'package:covoiturage2/domain/usecases/rideUsecase/CreateOrUpdate_ride_usecase.dart';
+import 'package:covoiturage2/domain/usecases/rideUsecase/create_ride_usecase.dart';
+import 'package:covoiturage2/domain/usecases/rideUsecase/delete_ride_usecase.dart';
+import 'package:covoiturage2/domain/usecases/rideUsecase/get_all_rides_usecase.dart';
+import 'package:covoiturage2/domain/usecases/rideUsecase/get_ridebyId_usecase.dart';
+import 'package:covoiturage2/domain/usecases/rideUsecase/update_ride_usecase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/create_account_usecase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/forget_password_usecase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/get_user_by_id_usecase.dart';
@@ -19,12 +28,17 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthenticationRepository>(
     () => AuthenticationRepositoryImpl(sl(), sl()),
   );
-  sl.registerLazySingleton<AuthenticationLocalDataSource>(
-      () => AuthenticationLocalDataSourceImpl());
+  sl.registerLazySingleton<RideRepository>(
+    () => RideRepositoryImpl(sl()),
+  );
 
   // /* data sources */
   sl.registerLazySingleton<AuthenticationRemoteDataSource>(
       () => AuthenticationRemoteDataSourceImpl());
+  sl.registerLazySingleton<AuthenticationLocalDataSource>(
+      () => AuthenticationLocalDataSourceImpl());
+  sl.registerLazySingleton<RideRemoteDataSource>(
+      () => RideRemoteDataSourceImpl());
 
   /* usecases */
   //authentication//
@@ -36,4 +50,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetUserByIdUsecase(sl()));
   sl.registerLazySingleton(() => UpdateUserUsecase(sl()));
   sl.registerLazySingleton(() => UpdatePasswordUsercase(sl()));
+
+  //ride//
+  sl.registerLazySingleton(() => CreateRideUsecase(sl()));
+  sl.registerLazySingleton(() => CreateOrUpdateRideUsecase(sl()));
+  sl.registerLazySingleton(() => DeleteRideUsecase(sl()));
+  sl.registerLazySingleton(() => GetAllRidesUsecase(sl()));
+  sl.registerLazySingleton(() => GetRideByIdUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateRideUsecase(sl()));
 }

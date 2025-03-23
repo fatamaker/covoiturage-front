@@ -82,3 +82,5 @@ class UnknownException implements Exception {
 
   UnknownException({this.message = 'An unknown error occurred.'});
 }
+
+class RideNotFoundException implements Exception {}

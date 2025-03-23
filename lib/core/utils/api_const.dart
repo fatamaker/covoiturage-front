@@ -11,4 +11,10 @@ class APIConst {
   static const resetPassword = '$baseUrl/Resetpassword';
   static const verfifCode = '$baseUrl/VerifCode';
   static const updateUserImage = '$baseUrl/updateImage';
+
+  //ride
+  static const rides = '$baseUrl/rides';
+  static const createOrUpdateRide = '$baseUrl/rides/createOrUpdateRide';
+  static const updateRide = '$baseUrl/rides/update';
+  static const deleteRide = '$baseUrl/rides/delete';
 }
