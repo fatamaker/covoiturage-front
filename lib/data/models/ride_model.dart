@@ -11,7 +11,7 @@ class RideModel extends Ride {
     required bool animals,
     required String driverId,
     required String vehicleId,
-    required int freePlaces,
+    required String date,
     required int passengerCount,
     required String luggageSize,
   }) : super(
@@ -24,31 +24,58 @@ class RideModel extends Ride {
           animals: animals,
           driverId: driverId,
           vehicleId: vehicleId,
-          freePlaces: freePlaces,
+          date: date,
           passengerCount: passengerCount,
           luggageSize: luggageSize,
         );
 
   factory RideModel.fromJson(Map<String, dynamic> json) {
+    print('Parsed JSON: $json'); // Log the JSON for debugging
+
     return RideModel(
-      id: json['_id'],
-      time1: json['time1'],
-      time2: json['time2'],
-      location1: json['location1'],
-      location2: json['location2'],
-      smoking: json['smoking'],
-      animals: json['animals'],
-      driverId: json['driver'],
-      vehicleId: json['vehicle'],
-      freePlaces: json['freePlaces'],
-      passengerCount: json['passengerCount'],
-      luggageSize: json['luggageSize'],
+      id: json['_id']?.toString() ?? "",
+      time1: json['time1']?.toString() ?? "",
+      time2: json['time2']?.toString() ?? "",
+      location1: json['location1']?.toString() ?? "",
+      location2: json['location2']?.toString() ?? "",
+      smoking: json['smoking'] ?? false,
+      animals: json['animals'] ?? false,
+      driverId: _parseDriverId(json),
+      vehicleId: _parseVehicleId(json),
+      date: json['date']?.toString() ?? "",
+      passengerCount: json['passengerCount'] ?? 1,
+      luggageSize: json['luggageSize']?.toString() ?? 'Petit',
     );
+  }
+
+  static String _parseDriverId(Map<String, dynamic> json) {
+    // Check if 'driver' is a string or a map and extract the driver ID
+    if (json['driver'] is String) {
+      return json['driver']; // Driver is just a string (ID)
+    } else if (json['driver'] is Map && json['driver']['_id'] != null) {
+      return json['driver']['_id'].toString(); // Driver is a map with an ID
+    }
+    return ""; // Return empty if no valid ID is found
+  }
+
+  static String _parseVehicleId(Map<String, dynamic> json) {
+    // Check if 'vehicle' is null, string, or a map and extract the vehicle ID
+    if (json['vehicle'] == null) return ""; // No vehicle data
+    if (json['vehicle'] is String)
+      return json['vehicle']; // Vehicle is just a string (ID)
+    if (json['vehicle'] is Map && json['vehicle']['_id'] != null) {
+      return json['vehicle']['_id'].toString(); // Vehicle is a map with an ID
+    }
+    return ""; // Return empty if no valid ID is found
+  }
+
+  @override
+  String toString() {
+    return 'RideModel(id: $id, time1: $time1, time2: $time2, location1: $location1, location2: $location2, date: $date, driver: $driverId, vehicle: $vehicleId  , passengerCount: $passengerCount,luggageSize: $luggageSize,smoking: $smoking,animals: $animals,)';
   }
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
       'time1': time1,
       'time2': time2,
       'location1': location1,
@@ -57,7 +84,7 @@ class RideModel extends Ride {
       'animals': animals,
       'driver': driverId,
       'vehicle': vehicleId,
-      'freePlaces': freePlaces,
+      'date': date,
       'passengerCount': passengerCount,
       'luggageSize': luggageSize,
     };

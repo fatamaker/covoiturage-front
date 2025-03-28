@@ -8,7 +8,7 @@ class Ride {
   final bool animals;
   final String driverId;
   final String vehicleId;
-  final int freePlaces;
+  final String date;
   final int passengerCount;
   final String luggageSize;
 
@@ -22,7 +22,7 @@ class Ride {
     required this.animals,
     required this.driverId,
     required this.vehicleId,
-    required this.freePlaces,
+    required this.date,
     required this.passengerCount,
     required this.luggageSize,
   });

@@ -16,9 +16,11 @@ class RideRepositoryImpl implements RideRepository {
   );
 
   @override
-  Future<Either<Failure, Ride>> createRide(RideModel ride) async {
+  Future<Either<Failure, Ride>> createRide(String time1, String time2,
+      String location1, String location2, String date, String driverId) async {
     try {
-      final res = await rideRemoteDataSource.createRide(ride);
+      final res = await rideRemoteDataSource.createRide(
+          time1, time2, location1, location2, date, driverId);
       return Right(res);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));

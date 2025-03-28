@@ -5,7 +5,8 @@ import 'package:covoiturage2/data/models/ride_model.dart';
 import 'package:http/http.dart' as http;
 
 abstract class RideRemoteDataSource {
-  Future<RideModel> createRide(RideModel ride);
+  Future<RideModel> createRide(String time1, String time2, String location1,
+      String location2, String date, String driverId);
   Future<RideModel> createOrUpdateRide(RideModel ride);
   Future<List<RideModel>> getAllRides();
   Future<RideModel> getRideById(String id);
@@ -15,17 +16,30 @@ abstract class RideRemoteDataSource {
 
 class RideRemoteDataSourceImpl implements RideRemoteDataSource {
   @override
-  Future<RideModel> createRide(RideModel ride) async {
+  Future<RideModel> createRide(String time1, String time2, String location1,
+      String location2, String date, String driverId) async {
     try {
       final url = Uri.parse(APIConst.rides);
+
+      final Map<String, dynamic> rideData = {
+        'time1': time1,
+        'time2': time2,
+        'location1': location1,
+        'location2': location2,
+        'date': date,
+        'driver': driverId
+      };
+
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(ride.toJson()),
+        body: jsonEncode(rideData),
       );
 
       if (response.statusCode == 201) {
-        return RideModel.fromJson(jsonDecode(response.body));
+        final ride = RideModel.fromJson(jsonDecode(response.body)['ride']);
+
+        return ride;
       } else {
         throw ServerException(
             message: "Failed to create ride: ${response.body}");
@@ -78,10 +92,13 @@ class RideRemoteDataSourceImpl implements RideRemoteDataSource {
   Future<RideModel> getRideById(String id) async {
     try {
       final url = Uri.parse('${APIConst.rides}/$id');
+
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        return RideModel.fromJson(jsonDecode(response.body));
+        final ride = RideModel.fromJson(jsonDecode(response.body)['ride']);
+
+        return ride;
       } else {
         throw ServerException(
             message: "Failed to fetch ride: ${response.body}");
@@ -95,6 +112,7 @@ class RideRemoteDataSourceImpl implements RideRemoteDataSource {
   Future<RideModel> updateRide(String id, RideModel ride) async {
     try {
       final url = Uri.parse('${APIConst.updateRide}/$id');
+
       final response = await http.put(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -102,7 +120,11 @@ class RideRemoteDataSourceImpl implements RideRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        return RideModel.fromJson(jsonDecode(response.body));
+        final ride = RideModel.fromJson(jsonDecode(response.body)['ride']);
+        print(
+            'Created ride: $ride'); // Check if the ride is populated correctly
+
+        return ride;
       } else {
         throw ServerException(
             message: "Failed to update ride: ${response.body}");

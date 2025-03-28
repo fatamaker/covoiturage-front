@@ -1,9 +1,12 @@
 import 'package:covoiturage2/data/data-source/local_data_source/authentication_local_data_source.dart';
 import 'package:covoiturage2/data/data-source/remote_data_source/remote_authentication_data_source.dart';
 import 'package:covoiturage2/data/data-source/remote_data_source/ride_remote_data_source.dart';
+import 'package:covoiturage2/data/data-source/remote_data_source/vehicle_remote_data_source.dart';
 import 'package:covoiturage2/data/repository/ride_repository_impl.dart';
 import 'package:covoiturage2/data/repository/user_repository_impl.dart';
+import 'package:covoiturage2/data/repository/vehicle_repository_impl.dart';
 import 'package:covoiturage2/domain/repository/RideRepository.dart';
+import 'package:covoiturage2/domain/repository/VehicleRepository.dart';
 import 'package:covoiturage2/domain/repository/authentication_repository.dart';
 import 'package:covoiturage2/domain/usecases/rideUsecase/CreateOrUpdate_ride_usecase.dart';
 import 'package:covoiturage2/domain/usecases/rideUsecase/create_ride_usecase.dart';
@@ -19,6 +22,12 @@ import 'package:covoiturage2/domain/usecases/userusecase/reset_password_usecase.
 import 'package:covoiturage2/domain/usecases/userusecase/update_password_usercase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/update_user_usecase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/verify_otp_usecase.dart';
+import 'package:covoiturage2/domain/usecases/vehicleUsecase/get_all_vehicles_usecase.dart';
+import 'package:covoiturage2/domain/usecases/vehicleusecase/create_vehicle_usecase.dart';
+import 'package:covoiturage2/domain/usecases/vehicleusecase/delete_vehicle_usecase.dart';
+import 'package:covoiturage2/domain/usecases/vehicleusecase/get_vehicleById_usecase.dart';
+import 'package:covoiturage2/domain/usecases/vehicleusecase/get_vehicles_bydriver_usecase.dart';
+import 'package:covoiturage2/domain/usecases/vehicleusecase/update_vehicle_usecase.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -31,6 +40,9 @@ Future<void> init() async {
   sl.registerLazySingleton<RideRepository>(
     () => RideRepositoryImpl(sl()),
   );
+  sl.registerLazySingleton<VehicleRepository>(
+    () => VehicleRepositoryImpl(sl()),
+  );
 
   // /* data sources */
   sl.registerLazySingleton<AuthenticationRemoteDataSource>(
@@ -39,6 +51,8 @@ Future<void> init() async {
       () => AuthenticationLocalDataSourceImpl());
   sl.registerLazySingleton<RideRemoteDataSource>(
       () => RideRemoteDataSourceImpl());
+  sl.registerLazySingleton<VehicleRemoteDataSource>(
+      () => VehicleRemoteDataSourceImpl());
 
   /* usecases */
   //authentication//
@@ -58,4 +72,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetAllRidesUsecase(sl()));
   sl.registerLazySingleton(() => GetRideByIdUsecase(sl()));
   sl.registerLazySingleton(() => UpdateRideUsecase(sl()));
+
+  //vehicle//
+  sl.registerLazySingleton(() => CreateVehicleUsecase(sl()));
+  sl.registerLazySingleton(() => DeleteVehicleUsecase(sl()));
+  sl.registerLazySingleton(() => GetAllVehiclesUsecase(sl()));
+  sl.registerLazySingleton(() => GetVehiclesByDriverUsecase(sl()));
+  sl.registerLazySingleton(() => GetVehicleByIdUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateVehicleUsecase(sl()));
 }

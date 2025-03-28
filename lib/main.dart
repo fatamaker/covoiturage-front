@@ -1,4 +1,5 @@
 import 'package:covoiturage2/presentation/controllers/authetification_controller.dart';
+import 'package:covoiturage2/presentation/controllers/ride_controller.dart';
 import 'package:covoiturage2/presentation/ui/HomePage.dart';
 import 'package:covoiturage2/presentation/ui/LoginScreen.dart';
 import 'package:covoiturage2/presentation/ui/page1.dart';

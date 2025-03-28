@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Scaffold(
+        body: SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -106,6 +107,6 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }

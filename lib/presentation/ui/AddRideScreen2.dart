@@ -1,36 +1,44 @@
 import 'package:covoiturage2/presentation/ui/AddRideScreen3.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:covoiturage2/presentation/controllers/ride_controller.dart';
+import 'package:covoiturage2/data/models/ride_model.dart';
 
 class AddRideScreen2 extends StatefulWidget {
+  final String rideId;
+  final RideModel ride;
+
+  AddRideScreen2({required this.rideId, required this.ride});
+
   @override
   _AddRideScreen2State createState() => _AddRideScreen2State();
 }
 
 class _AddRideScreen2State extends State<AddRideScreen2> {
-  int _passengerCount = 2;
-  String _selectedLuggageSize = "Moyen";
-  bool _cigaretteAccepted = false;
-  bool _animalsAccepted = false;
+  final RideController rideController = Get.find<RideController>();
 
   Widget _buildBaggageOption(String label) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _selectedLuggageSize = label;
-        });
+        rideController.setLuggageSize(label);
       },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        decoration: BoxDecoration(
-          color:
-              _selectedLuggageSize == label ? Colors.black : Colors.grey[300],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: _selectedLuggageSize == label ? Colors.white : Colors.black,
-            fontWeight: FontWeight.bold,
+      child: GetBuilder<RideController>(
+        builder: (controller) => Container(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          decoration: BoxDecoration(
+            color: controller.selectedLuggageSize == label
+                ? Colors.black
+                : Colors.grey[300],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: controller.selectedLuggageSize == label
+                  ? Colors.white
+                  : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
@@ -40,7 +48,6 @@ class _AddRideScreen2State extends State<AddRideScreen2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Column(
@@ -49,36 +56,38 @@ class _AddRideScreen2State extends State<AddRideScreen2> {
             SizedBox(height: 70),
 
             // Passenger Count
-            Center(
-              child: Column(
-                children: [
-                  Text("Nombre de passagers", style: TextStyle(fontSize: 18)),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.remove, size: 30),
-                        onPressed: () {
-                          setState(() {
-                            if (_passengerCount > 1) _passengerCount--;
-                          });
-                        },
-                      ),
-                      Text("$_passengerCount",
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold)),
-                      IconButton(
-                        icon: Icon(Icons.add, size: 30),
-                        onPressed: () {
-                          setState(() {
-                            _passengerCount++;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+            GetBuilder<RideController>(
+              builder: (controller) => Center(
+                child: Column(
+                  children: [
+                    Text("Nombre de passagers", style: TextStyle(fontSize: 18)),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.remove, size: 30),
+                          onPressed: () {
+                            if (controller.passengerCount > 1) {
+                              controller.setPassengerCount(
+                                  controller.passengerCount - 1);
+                            }
+                          },
+                        ),
+                        Text("${controller.passengerCount}",
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold)),
+                        IconButton(
+                          icon: Icon(Icons.add, size: 30),
+                          onPressed: () {
+                            controller.setPassengerCount(
+                                controller.passengerCount + 1);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -107,65 +116,91 @@ class _AddRideScreen2State extends State<AddRideScreen2> {
             SizedBox(height: 50),
 
             // Rules Section
-            Text("Règles", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Checkbox(
-                  value: _cigaretteAccepted,
-                  onChanged: (value) {
-                    setState(() {
-                      _cigaretteAccepted = value!;
-                    });
-                  },
-                ),
-                Icon(Icons.smoking_rooms_sharp, size: 20),
-                SizedBox(width: 10),
-                Text("Cigarette Acceptée"),
-              ],
-            ),
-            Row(
-              children: [
-                Checkbox(
-                  value: _animalsAccepted,
-                  onChanged: (value) {
-                    setState(() {
-                      _animalsAccepted = value!;
-                    });
-                  },
-                ),
-                Icon(Icons.pets, size: 20),
-                SizedBox(width: 10),
-                Text("Animaux Acceptée"),
-              ],
+            GetBuilder<RideController>(
+              builder: (controller) => Column(
+                children: [
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: controller.cigaretteAccepted,
+                        onChanged: (value) {
+                          controller.toggleCigarette(value!);
+                        },
+                      ),
+                      Icon(Icons.smoking_rooms_sharp, size: 20),
+                      SizedBox(width: 10),
+                      Text("Cigarette Acceptée"),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: controller.animalsAccepted,
+                        onChanged: (value) {
+                          controller.toggleAnimals(value!);
+                        },
+                      ),
+                      Icon(Icons.pets, size: 20),
+                      SizedBox(width: 10),
+                      Text("Animaux Acceptée"),
+                    ],
+                  ),
+                ],
+              ),
             ),
 
             Spacer(),
 
             // Continue Button
-            Container(
-              width: double.infinity,
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFBFD834), Color(0xFF133A1B)],
+            GetBuilder<RideController>(
+              builder: (controller) => Container(
+                width: double.infinity,
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFBFD834), Color(0xFF133A1B)],
+                  ),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddRideScreen3()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final updatedRide =
+                        await controller.updateRide(widget.rideId, widget.ride);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddRideScreen3(
+                          rideId: widget.rideId,
+                          ride: updatedRide!,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ),
+                  child: Text("Continuer",
+                      style: TextStyle(color: Colors.white, fontSize: 16)),
                 ),
-                child: Text("Continuer",
-                    style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
+            ),
+
+            SizedBox(height: 20),
+
+            // FutureBuilder to Observe Ride Update
+            FutureBuilder(
+              future: rideController.updateRide(widget.rideId, widget.ride),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                } else {
+                  return SizedBox(); // No widget if update is successful
+                }
+              },
             ),
           ],
         ),

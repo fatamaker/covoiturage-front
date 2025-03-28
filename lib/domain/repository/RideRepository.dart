@@ -5,7 +5,15 @@ import 'package:dartz/dartz.dart';
 
 abstract class RideRepository {
   // Create a new ride
-  Future<Either<Failure, Ride>> createRide(RideModel ride);
+
+  Future<Either<Failure, Ride>> createRide(
+    String time1,
+    String time2,
+    String location1,
+    String location2,
+    String date,
+    String driverId,
+  );
 
   // Create or update a ride
   Future<Either<Failure, Ride>> createOrUpdateRide(RideModel ride);

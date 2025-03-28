@@ -15,6 +15,8 @@ import 'package:covoiturage2/domain/usecases/userusecase/update_image_usecase.da
 import 'package:covoiturage2/domain/usecases/userusecase/update_password_usercase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/update_user_usecase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/verify_otp_usecase.dart';
+import 'package:covoiturage2/presentation/controllers/ride_controller.dart';
+import 'package:covoiturage2/presentation/controllers/vehicle_controller.dart';
 import 'package:covoiturage2/presentation/ui/HomePage.dart';
 import 'package:covoiturage2/presentation/ui/LoginScreen.dart';
 import 'package:covoiturage2/presentation/ui/OTPScreen.dart';
@@ -209,6 +211,8 @@ class AuthenticationController extends GetxController {
       password.clear();
       // ignore: unused_local_variable
       final userRes = await getCurrentUser(r.userId);
+      Get.put(RideController(userId: currentUser.id!), permanent: true);
+      Get.put(VehicleController(userId: currentUser.id!), permanent: true);
 
       // final CartController cartController = Get.find();
       //await cartController.getCartByUserId(currentUser.id!);
