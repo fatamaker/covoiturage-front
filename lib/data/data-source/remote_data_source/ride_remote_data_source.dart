@@ -77,7 +77,8 @@ class RideRemoteDataSourceImpl implements RideRemoteDataSource {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
+        final json = jsonDecode(response.body);
+        final List<dynamic> data = json['rides'];
         return data.map((ride) => RideModel.fromJson(ride)).toList();
       } else {
         throw ServerException(

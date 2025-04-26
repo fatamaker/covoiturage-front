@@ -1,4 +1,5 @@
 import 'package:covoiturage2/data/models/ride_model.dart';
+import 'package:covoiturage2/data/models/user_model.dart';
 import 'package:covoiturage2/di.dart';
 import 'package:covoiturage2/domain/entities/ride.dart';
 import 'package:covoiturage2/domain/usecases/rideUsecase/get_all_rides_usecase.dart';
@@ -11,8 +12,11 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../domain/usecases/userusecase/get_user_by_id_usecase.dart';
+
 class RideController extends GetxController {
   List<Ride> rides = [];
+  Map<String, UserModel> drivers = {};
   bool isLoading = false;
   RideModel? rideDetails;
 
@@ -28,6 +32,7 @@ class RideController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    getRides();
     update();
   }
 
@@ -70,11 +75,11 @@ class RideController extends GetxController {
 
           updatedRideResponse = r as RideModel?;
 
-          Fluttertoast.showToast(
-            msg: "Ride updated successfully!",
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-          );
+          // Fluttertoast.showToast(
+          //   msg: "Ride updated successfully!",
+          //   backgroundColor: Colors.green,
+          //   textColor: Colors.white,
+          // );
         },
       );
     } catch (e) {
@@ -163,20 +168,34 @@ class RideController extends GetxController {
   Future<void> getRides() async {
     isLoading = true;
     update();
+    print('getRides called');
 
     final res = await GetAllRidesUsecase(sl()).call();
 
-    res.fold(
-      (l) => Fluttertoast.showToast(
-        msg: l.message ?? "Failed to load rides",
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      ),
-      (r) {
-        rides = r;
+    await res.fold(
+      (l) {
+        Fluttertoast.showToast(
+          msg: l.message ?? "Failed to load rides",
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      },
+      (ridesList) async {
+        rides = ridesList;
+
+        for (var ride in ridesList) {
+          final userRes =
+              await sl<GetUserByIdUsecase>().call(userId: ride.driverId);
+          userRes.fold(
+            (l) => print('Failed to fetch driver ${ride.driverId}'),
+            (user) => drivers[ride.driverId] = user as UserModel,
+          );
+        }
+
         update();
       },
     );
+
     isLoading = false;
     update();
   }

@@ -1,3 +1,4 @@
+import 'package:covoiturage2/data/models/user_model.dart';
 import 'package:covoiturage2/domain/entities/ride.dart';
 
 class RideModel extends Ride {

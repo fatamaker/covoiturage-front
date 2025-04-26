@@ -1,13 +1,20 @@
 import 'package:covoiturage2/data/data-source/local_data_source/authentication_local_data_source.dart';
 import 'package:covoiturage2/data/data-source/remote_data_source/remote_authentication_data_source.dart';
+import 'package:covoiturage2/data/data-source/remote_data_source/reservation_remote_data_source.dart';
 import 'package:covoiturage2/data/data-source/remote_data_source/ride_remote_data_source.dart';
 import 'package:covoiturage2/data/data-source/remote_data_source/vehicle_remote_data_source.dart';
+import 'package:covoiturage2/data/repository/reservation_repository_impl.dart';
 import 'package:covoiturage2/data/repository/ride_repository_impl.dart';
 import 'package:covoiturage2/data/repository/user_repository_impl.dart';
 import 'package:covoiturage2/data/repository/vehicle_repository_impl.dart';
+import 'package:covoiturage2/domain/repository/ReservationRepository.dart';
 import 'package:covoiturage2/domain/repository/RideRepository.dart';
 import 'package:covoiturage2/domain/repository/VehicleRepository.dart';
 import 'package:covoiturage2/domain/repository/authentication_repository.dart';
+import 'package:covoiturage2/domain/usecases/reservationUsecase/create_reservation_usecase.dart';
+import 'package:covoiturage2/domain/usecases/reservationUsecase/get_reservations_by_Passenger.dart';
+import 'package:covoiturage2/domain/usecases/reservationUsecase/get_reservations_by_driver.dart';
+import 'package:covoiturage2/domain/usecases/reservationUsecase/update_reservation_status.dart';
 import 'package:covoiturage2/domain/usecases/rideUsecase/CreateOrUpdate_ride_usecase.dart';
 import 'package:covoiturage2/domain/usecases/rideUsecase/create_ride_usecase.dart';
 import 'package:covoiturage2/domain/usecases/rideUsecase/delete_ride_usecase.dart';
@@ -43,6 +50,9 @@ Future<void> init() async {
   sl.registerLazySingleton<VehicleRepository>(
     () => VehicleRepositoryImpl(sl()),
   );
+  sl.registerLazySingleton<ReservationRepository>(
+    () => ReservationRepositoryImpl(sl()),
+  );
 
   // /* data sources */
   sl.registerLazySingleton<AuthenticationRemoteDataSource>(
@@ -53,6 +63,8 @@ Future<void> init() async {
       () => RideRemoteDataSourceImpl());
   sl.registerLazySingleton<VehicleRemoteDataSource>(
       () => VehicleRemoteDataSourceImpl());
+  sl.registerLazySingleton<ReservationRemoteDataSource>(
+      () => ReservationRemoteDataSourceImpl());
 
   /* usecases */
   //authentication//
@@ -80,4 +92,10 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetVehiclesByDriverUsecase(sl()));
   sl.registerLazySingleton(() => GetVehicleByIdUsecase(sl()));
   sl.registerLazySingleton(() => UpdateVehicleUsecase(sl()));
+
+  //reservation//
+  sl.registerLazySingleton(() => CreateReservationUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateReservationStatus(sl()));
+  sl.registerLazySingleton(() => GetReservationsByDriver(sl()));
+  sl.registerLazySingleton(() => GetReservationsByPassenger(sl()));
 }

@@ -31,14 +31,12 @@ abstract class AuthenticationRemoteDataSource {
       {required String email, required String destination});
   Future<void> verifyOTP(String email, int otp);
   Future<void> resetPassword(String email, String password);
-
   Future<void> updateUser(
     String id,
     String firstName,
     String lastName,
-    String address,
     String phone,
-    String gender,
+    String governorate,
     DateTime birthDate,
   );
 
@@ -330,42 +328,63 @@ class AuthenticationRemoteDataSourceImpl
     }
   }
 
-  @override
   Future<void> updateUser(
     String id,
     String firstName,
     String lastName,
-    String adresse,
     String phone,
-    String gender,
+    String governorate,
     DateTime birthDate,
   ) async {
     try {
-      Map<String, dynamic> userModel = {
-        'id': id,
+      // 1. Préparer les données de la requête
+      final userModel = {
         'firstName': firstName,
         'lastName': lastName,
-        'adresse': adresse,
         'phone': phone,
-        'gender': gender,
-        'birthDate': birthDate.toString(),
+        'governorate': governorate,
+        'birthDate': birthDate.toUtc().toIso8601String(),
       };
 
-      String authToken = await token.then((value) => value!.token);
-      final url = Uri.parse(APIConst.updateProfile);
-      final res = await http.put(
-        url,
+      // 2. Récupérer le token d'authentification
+      final authToken = await token.then((value) => value?.token);
+      if (authToken == null)
+        throw ServerException(message: 'Not authenticated');
+
+      // 3. Effectuer la requête PUT
+      final response = await http.put(
+        Uri.parse('${APIConst.updateProfile}/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $authToken',
         },
         body: jsonEncode(userModel),
       );
-      if (res.statusCode != 200) {
-        throw ServerException(message: 'Cannot update user');
+
+      // 4. Vérifier la réponse du serveur
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        // Vérifier si la mise à jour a bien été appliquée
+        if (responseData['user']['governorate'] != governorate) {
+          throw ServerException(message: 'Governorate update not confirmed');
+        }
+
+        return;
       }
+
+      // 5. Gestion des erreurs
+      final errorResponse = jsonDecode(response.body);
+      throw ServerException(
+        message: errorResponse['message'] ?? 'Failed to update profile',
+      );
+    } on SocketException {
+      throw ServerException(message: 'No internet connection');
+    } on FormatException {
+      throw ServerException(message: 'Invalid server response');
     } catch (e) {
-      throw ServerException(message: 'Cannot update profile: ${e.toString()}');
+      throw ServerException(message: 'Update failed: ${e.toString()}');
     }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:covoiturage2/presentation/controllers/ride_controller.dart';
 import 'package:covoiturage2/presentation/ui/AddRideScreen2.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -70,91 +69,92 @@ class _AddRideScreen1State extends State<AddRideScreen1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text("Ajouter un trajet"),
         automaticallyImplyLeading: false,
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTextField(
-                label: "Ville de départ", controller: _departController),
-            _buildTextField(
-                label: "Ville d'arrivée", controller: _destinationController),
-            _buildTextField(
-              label: "Date",
-              controller: _dateController,
-              readOnly: true,
-              onTap: () => _selectDate(context),
-              icon: Icons.calendar_today,
-            ),
-            _buildTextField(
-              label: "Heure de départ",
-              controller: _timeController,
-              readOnly: true,
-              onTap: () => _selectTime(_timeController),
-              icon: Icons.access_time,
-            ),
-            _buildTextField(
-              label: "Heure d'arrivée",
-              controller: _timeController2,
-              readOnly: true,
-              onTap: () => _selectTime(_timeController2),
-              icon: Icons.access_time,
-            ),
-            SizedBox(height: 20),
-            GetBuilder<RideController>(
-              builder: (controller) {
-                return controller.isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : Container(
-                        width: double.infinity,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFBFD834), Color(0xFF133A1B)],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTextField(
+                  label: "Ville de départ", controller: _departController),
+              _buildTextField(
+                  label: "Ville d'arrivée", controller: _destinationController),
+              _buildTextField(
+                label: "Date",
+                controller: _dateController,
+                readOnly: true,
+                onTap: () => _selectDate(context),
+                icon: Icons.calendar_today,
+              ),
+              _buildTextField(
+                label: "Heure de départ",
+                controller: _timeController,
+                readOnly: true,
+                onTap: () => _selectTime(_timeController),
+                icon: Icons.access_time,
+              ),
+              _buildTextField(
+                label: "Heure d'arrivée",
+                controller: _timeController2,
+                readOnly: true,
+                onTap: () => _selectTime(_timeController2),
+                icon: Icons.access_time,
+              ),
+              SizedBox(height: 20),
+              GetBuilder<RideController>(
+                builder: (controller) {
+                  return controller.isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : Container(
+                          width: double.infinity,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFBFD834), Color(0xFF133A1B)],
+                            ),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final ride = await controller.createRide(
-                              departure: _departController,
-                              destination: _destinationController,
-                              time1: _timeController,
-                              time2: _timeController2,
-                              date: TextEditingController(
-                                  text: _dateController.text),
-                              context: context,
-                            );
-                            if (ride != null) {
-                              // Ensure ride is not null before navigation
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddRideScreen2(
-                                    rideId: ride
-                                        .id, // Pass the rideId from the returned RideModel
-                                    ride: ride, // Pass the RideModel instance
-                                  ),
-                                ),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              final ride = await controller.createRide(
+                                departure: _departController,
+                                destination: _destinationController,
+                                time1: _timeController,
+                                time2: _timeController2,
+                                date: TextEditingController(
+                                    text: _dateController.text),
+                                context: context,
                               );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
+                              if (ride != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddRideScreen2(
+                                      rideId: ride.id,
+                                      ride: ride,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Text("Continuer",
+                                style: TextStyle(color: Colors.white)),
                           ),
-                          child: Text("Continuer",
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                      );
-              },
-            ),
-          ],
+                        );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

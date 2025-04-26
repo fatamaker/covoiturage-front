@@ -15,6 +15,7 @@ import 'package:covoiturage2/domain/usecases/userusecase/update_image_usecase.da
 import 'package:covoiturage2/domain/usecases/userusecase/update_password_usercase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/update_user_usecase.dart';
 import 'package:covoiturage2/domain/usecases/userusecase/verify_otp_usecase.dart';
+import 'package:covoiturage2/presentation/controllers/reservation_controller.dart';
 import 'package:covoiturage2/presentation/controllers/ride_controller.dart';
 import 'package:covoiturage2/presentation/controllers/vehicle_controller.dart';
 import 'package:covoiturage2/presentation/ui/HomePage.dart';
@@ -316,36 +317,62 @@ class AuthenticationController extends GetxController {
     return true;
   }
 
-  Future<void> updateProfile(
-      {required TextEditingController firstName,
-      required TextEditingController lastName,
-      required String address,
-      required TextEditingController phone,
-      required id,
-      required String gender,
-      required String birthDate,
-      required BuildContext context}) async {
+  Future<void> updateProfile({
+    required TextEditingController firstName,
+    required TextEditingController lastName,
+    required TextEditingController phone,
+    required String id,
+    required String governorate,
+    required String birthDate,
+  }) async {
+    print('[AuthController] Starting profile update for user: $id');
+    print('[AuthController] Update data:');
+    print('  First Name: ${firstName.text}');
+    print('  Last Name: ${lastName.text}');
+    print('  Phone: ${phone.text}');
+    print('  Governorate: $governorate');
+    print('  BirthDate: $birthDate');
+
     String message = '';
-    final res = await UpdateUserUsecase(sl())(
+    try {
+      print('[AuthController] Calling UpdateUserUsecase...');
+      final res = await UpdateUserUsecase(sl())(
         firstName: firstName.text,
         lastName: lastName.text,
-        adresse: address,
         phone: phone.text,
         id: id,
-        gender: gender,
-        birthDate: DateTime.parse(birthDate));
-    res.fold((l) => message = l.message!, (r) async {
-      message = "profile_updated";
-      await getCurrentUser(currentUser.id!);
-    });
-    Fluttertoast.showToast(
+        governorate: governorate,
+        birthDate: DateTime.parse(birthDate),
+      );
+
+      await res.fold(
+        (failure) async {
+          message = failure.message ?? 'Update failed';
+          print('[AuthController] Update failed: $message');
+          throw failure; // Re-throw to be caught by UI
+        },
+        (success) async {
+          message = "profile_updated";
+          print('[AuthController] Update successful, refreshing user data...');
+          await getCurrentUser(id);
+          print('[AuthController] User data refreshed successfully');
+        },
+      );
+    } catch (e) {
+      print('[AuthController] Error in updateProfile: $e');
+      rethrow;
+    } finally {
+      print('[AuthController] Showing toast: $message');
+      Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.black,
         textColor: Colors.white,
-        fontSize: 16.0);
+        fontSize: 16.0,
+      );
+    }
   }
 
   Future<void> getCurrentUser(String userId) async {

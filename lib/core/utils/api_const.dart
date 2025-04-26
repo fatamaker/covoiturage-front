@@ -1,7 +1,7 @@
 import 'package:covoiturage2/domain/entities/vehicle.dart';
 
 class APIConst {
-  static const baseUrl = 'https://mongrel-infinite-stallion.ngrok-free.app/api';
+  static const baseUrl = 'http://192.168.177.24:5000/api';
 
   //user
   static const register = '$baseUrl/register';
@@ -19,6 +19,10 @@ class APIConst {
   static const createOrUpdateRide = '$baseUrl/rides/createOrUpdateRide';
   static const updateRide = '$baseUrl/rides/update';
   static const deleteRide = '$baseUrl/rides/delete';
+
   //vehicle
   static const Vehicle = '$baseUrl/vehicles';
+
+  //reservations
+  static const reservations = '$baseUrl/reservations';
 }

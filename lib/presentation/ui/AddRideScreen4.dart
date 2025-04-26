@@ -134,13 +134,7 @@ class AddRideScreen4 extends StatelessWidget {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Added parentheses to make it a function
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmationScreen(),
-                        ),
-                      );
+                      Get.to(() => ConfirmationScreen());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,

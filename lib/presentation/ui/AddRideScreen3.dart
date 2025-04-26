@@ -49,14 +49,14 @@ class AddRideScreen3 extends StatelessWidget {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ],
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 7),
               _buildTextField("Modèle", FontAwesomeIcons.car, modelController),
               _buildTextField(
                   "Année", FontAwesomeIcons.calendar, yearController),
               _buildTextField(
                   "Couleur", FontAwesomeIcons.palette, colorController),
-              SizedBox(height: 20),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+              SizedBox(height: 10),
               GetBuilder<RideController>(
                 builder: (controller) => Container(
                   width: double.infinity,

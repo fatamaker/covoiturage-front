@@ -1,4 +1,6 @@
+import 'package:covoiturage2/presentation/ui/HomePage.dart';
 import 'package:covoiturage2/presentation/ui/HomeScreen.dart';
+import 'package:covoiturage2/presentation/ui/widgets/BottomNavBar.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -74,9 +76,21 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.push(
+                  context,
                   MaterialPageRoute(
-                    builder: (context) => HomeScreen(),
+                    builder: (context) => Scaffold(
+                      body: HomeScreen(),
+                      bottomNavigationBar: BottomNavBar(
+                        currentIndex: 2, // Set the tab index appropriately
+                        onTabChange: (index) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 );
               },

@@ -156,18 +156,16 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       {required String id,
       required String firstName,
       required String lastName,
-      required String address,
       required String phone,
-      required String gender,
+      required String governorate,
       required DateTime birthDate}) async {
     try {
       await authenticationRemoteDataSource.updateUser(
         id,
         firstName,
         lastName,
-        address,
         phone,
-        gender,
+        governorate,
         birthDate,
       );
       return const Right(unit);
